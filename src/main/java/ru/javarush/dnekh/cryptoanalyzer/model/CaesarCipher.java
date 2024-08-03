@@ -1,10 +1,11 @@
 package ru.javarush.dnekh.cryptoanalyzer.model;
 
+import ru.javarush.dnekh.cryptoanalyzer.exception.InvalidCharacterException;
+
 /**
  * This class provides methods for encrypting and decrypting text using the Caesar cipher.
  */
 public class CaesarCipher {
-
     private final Alphabet alphabet;
 
     /**
@@ -20,8 +21,9 @@ public class CaesarCipher {
      * @param text the text to encrypt
      * @param key  the encryption key (shift value)
      * @return the encrypted text
+     * @throws InvalidCharacterException if the text contains a character not in the alphabet
      */
-    public String encrypt(String text, int key) {
+    public String encrypt(String text, int key) throws InvalidCharacterException {
         StringBuilder encryptedText = new StringBuilder();
         char[] alphabetArray = alphabet.getAlphabet();
         int alphabetSize = alphabetArray.length;
@@ -35,7 +37,7 @@ public class CaesarCipher {
                 }
                 encryptedText.append(alphabetArray[newIndex]);
             } else {
-                encryptedText.append(c); // Keep characters not in the alphabet unchanged
+                throw new InvalidCharacterException("Character '" + c + "' is not in the alphabet.");
             }
         }
 
@@ -48,8 +50,9 @@ public class CaesarCipher {
      * @param text the text to decrypt
      * @param key  the decryption key (shift value)
      * @return the decrypted text
+     * @throws InvalidCharacterException if the text contains a character not in the alphabet
      */
-    public String decrypt(String text, int key) {
+    public String decrypt(String text, int key) throws InvalidCharacterException {
         return encrypt(text, -key);
     }
 
