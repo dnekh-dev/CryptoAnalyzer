@@ -6,6 +6,7 @@ import ru.javarush.dnekh.cryptoanalyzer.exception.InvalidCharacterException;
  * This class provides methods for encrypting and decrypting text using the Caesar cipher.
  */
 public class CaesarCipher {
+
     private final Alphabet alphabet;
 
     /**
@@ -28,7 +29,10 @@ public class CaesarCipher {
         char[] alphabetArray = alphabet.getAlphabet();
         int alphabetSize = alphabetArray.length;
 
-        for (char c : text.toCharArray()) {
+        for (char c : text.toLowerCase().toCharArray()) {
+            if (c == '\n') {
+                continue;
+            }
             if (alphabet.isCharInAlphabet(c)) {
                 int originalIndex = findCharIndex(c, alphabetArray);
                 int newIndex = (originalIndex + key) % alphabetSize;
