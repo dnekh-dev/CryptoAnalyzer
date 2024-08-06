@@ -22,18 +22,17 @@ public class Main {
 
         System.out.println("-------------");
 
-        String pathToFile = "src/test.txt";
         FileHandler fileHandler = new FileHandler();
-        try {
-            System.out.println(fileHandler.readFile(pathToFile));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        String pathToFile = "src/test.txt";
+        String content = "Hello, world!";
 
         try {
-            fileHandler.writeFile(pathToFile, "Hello Kitty Super Mors!");
+            fileHandler.writeFile(pathToFile, content);
+
+            String readContent = fileHandler.readFile(pathToFile);
+            System.out.println("File content: " + readContent);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 }
