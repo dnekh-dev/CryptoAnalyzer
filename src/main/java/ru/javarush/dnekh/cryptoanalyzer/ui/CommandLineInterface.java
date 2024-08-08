@@ -1,9 +1,11 @@
 package ru.javarush.dnekh.cryptoanalyzer.ui;
 
-import ru.javarush.dnekh.cryptoanalyzer.model.CaesarCipher;
-import ru.javarush.dnekh.cryptoanalyzer.io.FileHandler;
 import ru.javarush.dnekh.cryptoanalyzer.exception.InvalidCharacterException;
+import ru.javarush.dnekh.cryptoanalyzer.io.FileHandler;
+import ru.javarush.dnekh.cryptoanalyzer.model.CaesarCipher;
+import ru.javarush.dnekh.cryptoanalyzer.validation.InputValidator;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -60,16 +62,27 @@ public class CommandLineInterface {
     private void handleEncryption() {
         System.out.print("Enter the file path to encrypt: ");
         String filePath = scanner.nextLine();
+        if (!InputValidator.isValidFilePath(filePath)) {
+            System.out.println("Invalid file path. Please try again.");
+            return;
+        }
+
         System.out.print("Enter the key for encryption: ");
         int key = Integer.parseInt(scanner.nextLine());
+
         System.out.print("Enter the output file path: ");
         String outputFilePath = scanner.nextLine();
+        String outputDirectoryPath = new File(outputFilePath).getParent();
+        if (outputDirectoryPath != null && !InputValidator.isValidDirectory(outputDirectoryPath)) {
+            System.out.println("Invalid output directory. Please try again.");
+            return;
+        }
 
         try {
             String content = fileHandler.readFile(filePath);
             String encryptedContent = caesarCipher.encrypt(content, key);
             fileHandler.writeFile(outputFilePath, encryptedContent);
-            System.out.println("File encrypted successfully.");
+            System.out.println("File encrypted successfully.\n");
         } catch (IOException | InvalidCharacterException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -78,16 +91,27 @@ public class CommandLineInterface {
     private void handleDecryption() {
         System.out.print("Enter the file path to decrypt: ");
         String filePath = scanner.nextLine();
+        if (!InputValidator.isValidFilePath(filePath)) {
+            System.out.println("Invalid file path. Please try again.");
+            return;
+        }
+
         System.out.print("Enter the key for decryption: ");
         int key = Integer.parseInt(scanner.nextLine());
+
         System.out.print("Enter the output file path: ");
         String outputFilePath = scanner.nextLine();
+        String outputDirectoryPath = new File(outputFilePath).getParent();
+        if (outputDirectoryPath != null && !InputValidator.isValidDirectory(outputDirectoryPath)) {
+            System.out.println("Invalid output directory. Please try again.");
+            return;
+        }
 
         try {
             String content = fileHandler.readFile(filePath);
             String decryptedContent = caesarCipher.decrypt(content, key);
             fileHandler.writeFile(outputFilePath, decryptedContent);
-            System.out.println("File decrypted successfully.");
+            System.out.println("File decrypted successfully.\n");
         } catch (IOException | InvalidCharacterException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -101,7 +125,7 @@ public class CommandLineInterface {
 
         try {
             String encryptedText = caesarCipher.encrypt(text, key);
-            System.out.println("Encrypted text: " + encryptedText);
+            System.out.println("Encrypted text: " + encryptedText + "\n");
         } catch (InvalidCharacterException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -115,7 +139,7 @@ public class CommandLineInterface {
 
         try {
             String decryptedText = caesarCipher.decrypt(text, key);
-            System.out.println("Decrypted text: " + decryptedText);
+            System.out.println("Decrypted text: " + decryptedText + "\n");
         } catch (InvalidCharacterException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -128,6 +152,6 @@ public class CommandLineInterface {
         System.out.println("3. Encrypt text from console - Encrypt text entered through the console with a Caesar cipher.");
         System.out.println("4. Decrypt text from console with key - Decrypt text entered through the console with a Caesar cipher using a key.");
         System.out.println("5. Help - Show this help message.");
-        System.out.println("6. Exit - Exit the application.");
+        System.out.println("6. Exit - Exit the application.\n");
     }
 }

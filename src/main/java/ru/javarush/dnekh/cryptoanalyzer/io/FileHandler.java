@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -24,7 +25,7 @@ public class FileHandler {
      * @return the text content of the file
      * @throws IOException if an I/O error occurs reading from the file
      */
-    public String readFile(String filePath) throws IOException {
+    public String readFile(String filePath) throws IOException, InvalidPathException {
         Path path = Paths.get(filePath);
         StringBuilder content = new StringBuilder();
 
