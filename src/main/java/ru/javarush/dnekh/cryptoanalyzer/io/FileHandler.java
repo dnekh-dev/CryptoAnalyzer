@@ -17,6 +17,7 @@ import java.nio.file.StandardOpenOption;
 public class FileHandler {
 
     private final Charset charset = StandardCharsets.UTF_8;
+    private static final String DEFAULT_OUTPUT_FILENAME = "result_output.txt";
 
     /**
      * Reads the entire text content from the specified file using Java NIO with buffered reader.
@@ -41,16 +42,32 @@ public class FileHandler {
 
     /**
      * Writes the specified text to the specified file using Java NIO with buffered writer.
-     * If the file already exists, it will be overwritten.
+     * If the file path is not specified, it writes to a default file in the same directory
+     * as the source file with the name "result_output.txt".
      *
-     * @param filePath the path to the file
+     * @param sourceFilePath the path to the source file
+     * @param outputFilePath the path to the file
      * @param content  the text content to write to the file
      * @throws IOException if an I/O error occurs writing to the file
      */
-    public void writeFile(String filePath, String content) throws IOException {
-        Path path = Paths.get(filePath);
+    public void writeFile(String sourceFilePath, String outputFilePath, String content) throws IOException {
+        Path outputPath;
 
-        try (BufferedWriter writer = Files.newBufferedWriter(path, charset, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        if (outputFilePath == null || outputFilePath.isEmpty()) {
+            Path sourcePath = Paths.get(sourceFilePath);
+            Path sourceDirectory = sourcePath.getParent();
+
+            if (sourceDirectory == null) {
+                // There is no a parent directory for a file (if the file is in the root directory)
+                outputPath = Paths.get(DEFAULT_OUTPUT_FILENAME);
+            } else {
+                outputPath = sourceDirectory.resolve(DEFAULT_OUTPUT_FILENAME);
+            }
+        } else {
+            outputPath = Paths.get(outputFilePath);
+        }
+
+        try (BufferedWriter writer = Files.newBufferedWriter(outputPath, charset, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             writer.write(content);
         }
     }

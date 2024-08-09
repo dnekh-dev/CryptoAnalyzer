@@ -19,7 +19,7 @@ public class Alphabet {
     private static final String NUMBERS = "1234567890";
 
     private static final String SYMBOLS =
-            ".,«»\"':;!? -*()=+№_[]{}";
+            ".,«»\"':;!? -*()=+№_[]{}\\<>";
 
     // Combined alphabet string
     private static final String ALPHABET = RUS_ALPHABET + ENG_ALPHABET + NUMBERS + SYMBOLS;

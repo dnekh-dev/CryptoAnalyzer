@@ -70,18 +70,23 @@ public class CommandLineInterface {
         System.out.print("Enter the key for encryption: ");
         int key = Integer.parseInt(scanner.nextLine());
 
-        System.out.print("Enter the output file path: ");
+        System.out.print("Enter the output file path (or press Enter to use the default path): ");
         String outputFilePath = scanner.nextLine();
-        String outputDirectoryPath = new File(outputFilePath).getParent();
-        if (outputDirectoryPath != null && !InputValidator.isValidDirectory(outputDirectoryPath)) {
-            System.out.println("Invalid output directory. Please try again.");
-            return;
+
+        if (outputFilePath.isEmpty()) {
+            outputFilePath = null; // Use the default file path logic in FileHandler
+        } else {
+            String outputDirectoryPath = new File(outputFilePath).getParent();
+            if (outputDirectoryPath != null && !InputValidator.isValidDirectory(outputDirectoryPath)) {
+                System.out.println("Invalid output directory. Please try again.");
+                return;
+            }
         }
 
         try {
             String content = fileHandler.readFile(filePath);
             String encryptedContent = caesarCipher.encrypt(content, key);
-            fileHandler.writeFile(outputFilePath, encryptedContent);
+            fileHandler.writeFile(filePath, outputFilePath, encryptedContent);
             System.out.println("File encrypted successfully.\n");
         } catch (IOException | InvalidCharacterException e) {
             System.out.println("Error: " + e.getMessage());
@@ -99,18 +104,23 @@ public class CommandLineInterface {
         System.out.print("Enter the key for decryption: ");
         int key = Integer.parseInt(scanner.nextLine());
 
-        System.out.print("Enter the output file path: ");
+        System.out.print("Enter the output file path (or press Enter to use the default path): ");
         String outputFilePath = scanner.nextLine();
-        String outputDirectoryPath = new File(outputFilePath).getParent();
-        if (outputDirectoryPath != null && !InputValidator.isValidDirectory(outputDirectoryPath)) {
-            System.out.println("Invalid output directory. Please try again.");
-            return;
+
+        if (outputFilePath.isEmpty()) {
+            outputFilePath = null; // Use the default file path logic in FileHandler
+        } else {
+            String outputDirectoryPath = new File(outputFilePath).getParent();
+            if (outputDirectoryPath != null && !InputValidator.isValidDirectory(outputDirectoryPath)) {
+                System.out.println("Invalid output directory. Please try again.");
+                return;
+            }
         }
 
         try {
             String content = fileHandler.readFile(filePath);
             String decryptedContent = caesarCipher.decrypt(content, key);
-            fileHandler.writeFile(outputFilePath, decryptedContent);
+            fileHandler.writeFile(filePath, outputFilePath, decryptedContent);
             System.out.println("File decrypted successfully.\n");
         } catch (IOException | InvalidCharacterException e) {
             System.out.println("Error: " + e.getMessage());
