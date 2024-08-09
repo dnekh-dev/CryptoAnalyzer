@@ -36,7 +36,7 @@ public enum MenuOption {
             case "4" -> DECRYPT_CONSOLE;
             case "5" -> HELP;
             case "6" -> EXIT;
-            default -> throw new IllegalArgumentException("Invalid menu option: " + option);
+            default -> throw new IllegalArgumentException("\nINVALID MENU OPTION: " + option + "\nTRY AGAIN!\n");
         };
     }
 }

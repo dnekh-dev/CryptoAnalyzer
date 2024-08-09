@@ -25,9 +25,11 @@ public class CommandLineInterface {
 
     public void start() {
         while (true) {
+            System.out.println("MENU OPTIONS:");
             MenuOption.printMenu();
             System.out.print("Choose an option: ");
             String option = scanner.nextLine();
+            System.out.println();
 
             try {
                 MenuOption menuOption = MenuOption.fromString(option);
@@ -63,7 +65,7 @@ public class CommandLineInterface {
         System.out.print("Enter the file path to encrypt: ");
         String filePath = scanner.nextLine();
         if (!InputValidator.isValidFilePath(filePath)) {
-            System.out.println("Invalid file path. Please try again.");
+            System.out.println("INVALID FILE PATH. PLEASE TRY AGAIN!\n");
             return;
         }
 
@@ -97,7 +99,7 @@ public class CommandLineInterface {
         System.out.print("Enter the file path to decrypt: ");
         String filePath = scanner.nextLine();
         if (!InputValidator.isValidFilePath(filePath)) {
-            System.out.println("Invalid file path. Please try again.");
+            System.out.println("INVALID FILE PATH. PLEASE TRY AGAIN!\n");
             return;
         }
 
@@ -156,12 +158,15 @@ public class CommandLineInterface {
     }
 
     private void printHelp() {
-        System.out.println("Help:");
-        System.out.println("1. Encrypt text from file - Encrypt a text file with a Caesar cipher.");
-        System.out.println("2. Decrypt text from file with key - Decrypt a text file with a Caesar cipher using a key.");
-        System.out.println("3. Encrypt text from console - Encrypt text entered through the console with a Caesar cipher.");
-        System.out.println("4. Decrypt text from console with key - Decrypt text entered through the console with a Caesar cipher using a key.");
-        System.out.println("5. Help - Show this help message.");
-        System.out.println("6. Exit - Exit the application.\n");
+        String helpMessage = String.format(
+                "HELP:%n" +
+                        "1. Encrypt text from file - Encrypt a text file with a Caesar cipher.%n" +
+                        "2. Decrypt text from file with key - Decrypt a text file with a Caesar cipher using a key.%n" +
+                        "3. Encrypt text from console - Encrypt text entered through the console with a Caesar cipher.%n" +
+                        "4. Decrypt text from console with key - Decrypt text entered through the console with a Caesar cipher using a key.%n" +
+                        "5. Help - Show this help message.%n" +
+                        "6. Exit - Exit the application.%n"
+        );
+        System.out.println(helpMessage);
     }
 }
