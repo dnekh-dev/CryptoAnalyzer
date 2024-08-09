@@ -1,8 +1,10 @@
 package ru.javarush.dnekh.cryptoanalyzer.ui;
 
+import ru.javarush.dnekh.cryptoanalyzer.actions.Action;
+import ru.javarush.dnekh.cryptoanalyzer.actions.DecryptAction;
+import ru.javarush.dnekh.cryptoanalyzer.actions.EncryptAction;
 import ru.javarush.dnekh.cryptoanalyzer.exception.InvalidCharacterException;
 import ru.javarush.dnekh.cryptoanalyzer.io.FileHandler;
-import ru.javarush.dnekh.cryptoanalyzer.model.CaesarCipher;
 import ru.javarush.dnekh.cryptoanalyzer.validation.InputValidator;
 
 import java.io.File;
@@ -14,20 +16,30 @@ import java.util.Scanner;
  */
 public class CommandLineInterface {
     private final Scanner scanner;
-    private final CaesarCipher caesarCipher;
     private final FileHandler fileHandler;
+
+    // Constants for messages
+    private static final String MENU_HEADER = "MENU OPTIONS:";
+    private static final String PROMPT_OPTION = "Choose an option: ";
+    private static final String PROMPT_FILE_PATH = "Enter the file path to %s: ";
+    private static final String PROMPT_KEY = "Enter the key for %s: ";
+    private static final String PROMPT_OUTPUT_PATH = "Enter the output file path (or press Enter to use the default path): ";
+    private static final String ERROR_INVALID_PATH = "INVALID FILE PATH. PLEASE TRY AGAIN!\n";
+    private static final String ERROR_INVALID_DIRECTORY = "Invalid output directory. Please try again.";
+    private static final String SUCCESS_FILE_OPERATION = "File %s successfully.\n";
+    private static final String EXIT_MESSAGE = "Exiting...";
+    private static final String ERROR_MESSAGE = "Error: ";
 
     public CommandLineInterface() {
         this.scanner = new Scanner(System.in);
-        this.caesarCipher = new CaesarCipher();
         this.fileHandler = new FileHandler();
     }
 
     public void start() {
         while (true) {
-            System.out.println("MENU OPTIONS:");
+            System.out.println(MENU_HEADER);
             MenuOption.printMenu();
-            System.out.print("Choose an option: ");
+            System.out.print(PROMPT_OPTION);
             String option = scanner.nextLine();
             System.out.println();
 
@@ -35,25 +47,25 @@ public class CommandLineInterface {
                 MenuOption menuOption = MenuOption.fromString(option);
                 switch (menuOption) {
                     case ENCRYPT:
-                        handleEncryption();
+                        handleFileOperation(new EncryptAction(), "encrypt");
                         break;
                     case DECRYPT:
-                        handleDecryption();
+                        handleFileOperation(new DecryptAction(), "decrypt");
                         break;
                     case ENCRYPT_CONSOLE:
-                        handleConsoleEncryption();
+                        handleConsoleOperation(new EncryptAction(), "encrypt");
                         break;
                     case DECRYPT_CONSOLE:
-                        handleConsoleDecryption();
+                        handleConsoleOperation(new DecryptAction(), "decrypt");
                         break;
                     case HELP:
                         printHelp();
                         break;
                     case EXIT:
-                        System.out.println("Exiting...");
+                        System.out.println(EXIT_MESSAGE);
                         return;
                     default:
-                        System.out.println("Invalid option. Please try again.");
+                        System.out.println(ERROR_INVALID_PATH);
                 }
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
@@ -61,99 +73,51 @@ public class CommandLineInterface {
         }
     }
 
-    private void handleEncryption() {
-        System.out.print("Enter the file path to encrypt: ");
+    private void handleFileOperation(Action action, String operation) {
+        System.out.printf(PROMPT_FILE_PATH, operation);
         String filePath = scanner.nextLine();
         if (!InputValidator.isValidFilePath(filePath)) {
-            System.out.println("INVALID FILE PATH. PLEASE TRY AGAIN!\n");
+            System.out.println(ERROR_INVALID_PATH);
             return;
         }
 
-        System.out.print("Enter the key for encryption: ");
+        System.out.printf(PROMPT_KEY, operation);
         int key = Integer.parseInt(scanner.nextLine());
 
-        System.out.print("Enter the output file path (or press Enter to use the default path): ");
+        System.out.print(PROMPT_OUTPUT_PATH);
         String outputFilePath = scanner.nextLine();
 
-        if (outputFilePath.isEmpty()) {
-            outputFilePath = null; // Use the default file path logic in FileHandler
-        } else {
+        if (!outputFilePath.isEmpty()) {
             String outputDirectoryPath = new File(outputFilePath).getParent();
             if (outputDirectoryPath != null && !InputValidator.isValidDirectory(outputDirectoryPath)) {
-                System.out.println("Invalid output directory. Please try again.");
+                System.out.println(ERROR_INVALID_DIRECTORY);
                 return;
             }
+        } else {
+            outputFilePath = null; // Use the default file path logic in FileHandler
         }
 
         try {
             String content = fileHandler.readFile(filePath);
-            String encryptedContent = caesarCipher.encrypt(content, key);
-            fileHandler.writeFile(filePath, outputFilePath, encryptedContent);
-            System.out.println("File encrypted successfully.\n");
+            String resultContent = action.execute(content, key);
+            fileHandler.writeFile(filePath, outputFilePath, resultContent);
+            System.out.printf(SUCCESS_FILE_OPERATION, operation + "ed");
         } catch (IOException | InvalidCharacterException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(ERROR_MESSAGE + e.getMessage());
         }
     }
 
-    private void handleDecryption() {
-        System.out.print("Enter the file path to decrypt: ");
-        String filePath = scanner.nextLine();
-        if (!InputValidator.isValidFilePath(filePath)) {
-            System.out.println("INVALID FILE PATH. PLEASE TRY AGAIN!\n");
-            return;
-        }
-
-        System.out.print("Enter the key for decryption: ");
-        int key = Integer.parseInt(scanner.nextLine());
-
-        System.out.print("Enter the output file path (or press Enter to use the default path): ");
-        String outputFilePath = scanner.nextLine();
-
-        if (outputFilePath.isEmpty()) {
-            outputFilePath = null; // Use the default file path logic in FileHandler
-        } else {
-            String outputDirectoryPath = new File(outputFilePath).getParent();
-            if (outputDirectoryPath != null && !InputValidator.isValidDirectory(outputDirectoryPath)) {
-                System.out.println("Invalid output directory. Please try again.");
-                return;
-            }
-        }
-
-        try {
-            String content = fileHandler.readFile(filePath);
-            String decryptedContent = caesarCipher.decrypt(content, key);
-            fileHandler.writeFile(filePath, outputFilePath, decryptedContent);
-            System.out.println("File decrypted successfully.\n");
-        } catch (IOException | InvalidCharacterException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
-    private void handleConsoleEncryption() {
-        System.out.print("Enter the text to encrypt: ");
+    private void handleConsoleOperation(Action action, String operation) {
+        System.out.printf("Enter the text to %s: ", operation);
         String text = scanner.nextLine();
-        System.out.print("Enter the key for encryption: ");
+        System.out.printf(PROMPT_KEY, operation);
         int key = Integer.parseInt(scanner.nextLine());
 
         try {
-            String encryptedText = caesarCipher.encrypt(text, key);
-            System.out.println("Encrypted text: " + encryptedText + "\n");
+            String resultText = action.execute(text, key);
+            System.out.printf("Resulting %s text: %s%n%n", operation, resultText);
         } catch (InvalidCharacterException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
-    private void handleConsoleDecryption() {
-        System.out.print("Enter the text to decrypt: ");
-        String text = scanner.nextLine();
-        System.out.print("Enter the key for decryption: ");
-        int key = Integer.parseInt(scanner.nextLine());
-
-        try {
-            String decryptedText = caesarCipher.decrypt(text, key);
-            System.out.println("Decrypted text: " + decryptedText + "\n");
-        } catch (InvalidCharacterException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(ERROR_MESSAGE + e.getMessage());
         }
     }
 
