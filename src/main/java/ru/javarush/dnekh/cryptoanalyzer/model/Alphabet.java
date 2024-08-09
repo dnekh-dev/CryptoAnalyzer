@@ -16,11 +16,13 @@ public class Alphabet {
     private static final String ENG_ALPHABET =
             "abcdefghijklmnopqrstuvwxyz";
 
+    private static final String NUMBERS = "1234567890";
+
     private static final String SYMBOLS =
-            ".,«»\"':;!? -";
+            ".,«»\"':;!? -*()=+№_[]{}";
 
     // Combined alphabet string
-    private static final String ALPHABET = RUS_ALPHABET + ENG_ALPHABET + SYMBOLS;
+    private static final String ALPHABET = RUS_ALPHABET + ENG_ALPHABET + NUMBERS + SYMBOLS;
 
     // Set for fast character lookup
     private final Set<Character> alphabetSet;
