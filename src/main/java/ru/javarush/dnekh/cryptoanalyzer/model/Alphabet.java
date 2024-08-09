@@ -9,34 +9,41 @@ import java.util.Set;
  */
 public class Alphabet {
 
-    // Array of characters representing the Cyrillic alphabet and additional symbols
-    private static final char[] ALPHABET = {
-            'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ',
-            'ъ', 'ы', 'ь', 'э', 'ю', 'я', '.', ',', '«', '»', '"', '\'', ':', ';', '!', '?', ' '
-    };
+    // Strings representing the Cyrillic alphabet, English alphabet, and additional symbols
+    private static final String RUS_ALPHABET =
+            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+
+    private static final String ENG_ALPHABET =
+            "abcdefghijklmnopqrstuvwxyz";
+
+    private static final String SYMBOLS =
+            ".,«»\"':;!? -";
+
+    // Combined alphabet string
+    private static final String ALPHABET = RUS_ALPHABET + ENG_ALPHABET + SYMBOLS;
 
     // Set for fast character lookup
     private final Set<Character> alphabetSet;
 
     /**
      * Constructor initializes the set of alphabet characters.
-     * The alphabet includes Cyrillic characters and specific punctuation marks.
+     * The alphabet includes Cyrillic characters, English characters, and specific punctuation marks.
      */
     public Alphabet() {
         this.alphabetSet = new HashSet<>();
-        for (char ch : ALPHABET) {
+        for (char ch : ALPHABET.toCharArray()) {
             alphabetSet.add(ch);
         }
     }
 
     /**
      * Returns a copy of the alphabet as a character array.
-     * This prevents modification of the original alphabet array.
+     * This prevents modification of the original alphabet string.
      *
-     * @return a copy of the alphabet array
+     * @return a copy of the alphabet as a character array
      */
     public char[] getAlphabet() {
-        return ALPHABET.clone();
+        return ALPHABET.toCharArray();
     }
 
     /**
