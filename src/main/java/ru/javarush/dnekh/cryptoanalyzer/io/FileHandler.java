@@ -2,6 +2,7 @@ package ru.javarush.dnekh.cryptoanalyzer.io;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -51,24 +52,62 @@ public class FileHandler {
      * @throws IOException if an I/O error occurs writing to the file
      */
     public void writeFile(String sourceFilePath, String outputFilePath, String content) throws IOException {
-        Path outputPath;
+        Path outputPath = getOutputFilePath(sourceFilePath, outputFilePath);
 
+        try (BufferedWriter writer = Files.newBufferedWriter(outputPath, charset, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            writer.write(content);
+        }
+    }
+
+    /**
+     * Generates the output file path by appending a suffix to the original file name.
+     *
+     * @param originalFilePath the path of the original file
+     * @param operation        the operation being performed ("encrypt", "decrypt", "bruteforce_decrypt")
+     * @return the generated output file path
+     */
+    public String generateOutputFilePath(String originalFilePath, String operation) {
+        File originalFile = new File(originalFilePath);
+        String parentDirectory = originalFile.getParent();
+        String originalFileName = originalFile.getName();
+
+        String suffix = switch (operation) {
+            case "encrypt" -> "_encrypted";
+            case "decrypt" -> "_decrypted";
+            case "bruteforce_decrypt" -> "_bruteforce_decrypted";
+            default -> "_result";
+        };
+
+        int extensionIndex = originalFileName.lastIndexOf(".");
+        String newFileName;
+        if (extensionIndex > 0) {
+            newFileName = originalFileName.substring(0, extensionIndex) + suffix + originalFileName.substring(extensionIndex);
+        } else {
+            newFileName = originalFileName + suffix;
+        }
+
+        return parentDirectory + File.separator + newFileName;
+    }
+
+    /**
+     * Determines the output file path based on the source file path or a provided output file path.
+     *
+     * @param sourceFilePath the path to the source file
+     * @param outputFilePath the path to the output file or null/empty if not specified
+     * @return the resolved output file path
+     */
+    private Path getOutputFilePath(String sourceFilePath, String outputFilePath) {
         if (outputFilePath == null || outputFilePath.isEmpty()) {
             Path sourcePath = Paths.get(sourceFilePath);
             Path sourceDirectory = sourcePath.getParent();
 
             if (sourceDirectory == null) {
-                // There is no a parent directory for a file (if the file is in the root directory)
-                outputPath = Paths.get(DEFAULT_OUTPUT_FILENAME);
+                return Paths.get(DEFAULT_OUTPUT_FILENAME);
             } else {
-                outputPath = sourceDirectory.resolve(DEFAULT_OUTPUT_FILENAME);
+                return sourceDirectory.resolve(DEFAULT_OUTPUT_FILENAME);
             }
         } else {
-            outputPath = Paths.get(outputFilePath);
-        }
-
-        try (BufferedWriter writer = Files.newBufferedWriter(outputPath, charset, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            writer.write(content);
+            return Paths.get(outputFilePath);
         }
     }
 }

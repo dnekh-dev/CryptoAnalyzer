@@ -2,6 +2,8 @@ package ru.javarush.dnekh.cryptoanalyzer.model;
 
 import ru.javarush.dnekh.cryptoanalyzer.exception.InvalidCharacterException;
 
+import java.util.Scanner;
+
 /**
  * This class provides methods for encrypting and decrypting text using the Caesar cipher.
  */
@@ -58,6 +60,40 @@ public class CaesarCipher {
      */
     public String decrypt(String text, int key) throws InvalidCharacterException {
         return encrypt(text, -key);
+    }
+
+    /**
+     * Performs brute force decryption by trying all possible shifts and returns the confirmed shift value.
+     *
+     * @param text the text to decrypt
+     * @return the confirmed shift value if the user confirms the decryption, or -1 if no confirmation
+     */
+    public int bruteForceDecryptAndGetShift(String text) {
+        Scanner scanner = new Scanner(System.in);
+        char[] alphabetArray = alphabet.getAlphabet();
+        int alphabetSize = alphabetArray.length;
+
+        System.out.println("\nStarting Brute Force Decryption...");
+
+        for (int shift = 1; shift < alphabetSize; shift++) {
+            String decryptedText = decrypt(text, shift);
+
+            String firstSentence = decryptedText.split("[.!?]", 2)[0];
+            if (firstSentence.length() > 100) {
+                firstSentence = firstSentence.substring(0, 100);
+            }
+
+            System.out.println("Shift " + shift + ": " + firstSentence);
+            System.out.print("Is this correct? (yes/no): ");
+            String userResponse = scanner.nextLine().trim().toLowerCase();
+
+            if (userResponse.equals("yes")) {
+                return shift;
+            }
+        }
+
+        System.out.println("Brute Force Decryption Completed. No correct decryption found.");
+        return -1;
     }
 
     /**

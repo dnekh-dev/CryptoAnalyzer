@@ -7,10 +7,9 @@ public enum MenuOption {
 
     ENCRYPT("1. Encrypt text from file"),
     DECRYPT("2. Decrypt text from file with key"),
-    ENCRYPT_CONSOLE("3. Encrypt text from console"),
-    DECRYPT_CONSOLE("4. Decrypt text from console with key"),
-    HELP("5. Help"),
-    EXIT("6. Exit");
+    BRUTE_FORCE("3. Brute Force Decrypt"),
+    HELP("4. Help"),
+    EXIT("5. Exit");
 
     private final String description;
 
@@ -32,10 +31,9 @@ public enum MenuOption {
         return switch (option) {
             case "1" -> ENCRYPT;
             case "2" -> DECRYPT;
-            case "3" -> ENCRYPT_CONSOLE;
-            case "4" -> DECRYPT_CONSOLE;
-            case "5" -> HELP;
-            case "6" -> EXIT;
+            case "3" -> BRUTE_FORCE;
+            case "4" -> HELP;
+            case "5" -> EXIT;
             default -> throw new IllegalArgumentException("\nINVALID MENU OPTION: " + option + "\nTRY AGAIN!\n");
         };
     }
