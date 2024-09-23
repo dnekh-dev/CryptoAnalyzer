@@ -1,31 +1,27 @@
 package ru.javarush.dnekh.cryptoanalyzer.ui;
 
 import ru.javarush.dnekh.cryptoanalyzer.exception.ErrorHandler;
-import ru.javarush.dnekh.cryptoanalyzer.io.FileHandler;
-import ru.javarush.dnekh.cryptoanalyzer.model.CaesarCipher;
+import ru.javarush.dnekh.cryptoanalyzer.service.FileProcessor;
 import ru.javarush.dnekh.cryptoanalyzer.validation.InputValidator;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 /**
  * This class provides a command line interface for the Caesar cipher application.
  */
 public class CommandLineInterface {
+
     private final Scanner scanner;
-    private final FileHandler fileHandler;
-    private final CaesarCipher caesarCipher;
+    private final FileProcessor fileProcessor;
 
     // Constants for messages
     private static final String MENU_HEADER = "MENU OPTIONS:";
     private static final String PROMPT_OPTION = "Choose an option: ";
-    private static final String SUCCESS_FILE_OPERATION = "File %s successfully.\n";
     private static final String EXIT_MESSAGE = "Exiting...";
 
     public CommandLineInterface() {
         this.scanner = new Scanner(System.in);
-        this.fileHandler = new FileHandler();
-        this.caesarCipher = new CaesarCipher();
+        this.fileProcessor = new FileProcessor();
     }
 
     public void start() {
@@ -40,10 +36,10 @@ public class CommandLineInterface {
                 MenuOption menuOption = MenuOption.fromString(option);
                 switch (menuOption) {
                     case ENCRYPT:
-                        processFileOperation("encrypt");
+                        handleFileOperation("encrypt");
                         break;
                     case DECRYPT:
-                        processFileOperation("decrypt");
+                        handleFileOperation("decrypt");
                         break;
                     case BRUTE_FORCE:
                         handleBruteForceFileOperation();
@@ -63,49 +59,17 @@ public class CommandLineInterface {
         }
     }
 
-    private void processFileOperation(String operation) {
+    private void handleFileOperation(String operation) {
         String filePath = getInputFilePath(operation);
         if (filePath == null) return;
-
-        String outputFilePath = fileHandler.generateOutputFilePath(filePath, operation);
-
-        try {
-            String content = fileHandler.readFile(filePath);
-            int key = getKeyFromUser(operation);
-
-            String resultContent = operation.equals("encrypt")
-                    ? caesarCipher.encrypt(content, key)
-                    : caesarCipher.decrypt(content, key);
-
-            fileHandler.writeFile(filePath, outputFilePath, resultContent);
-            System.out.printf(SUCCESS_FILE_OPERATION, operation + "ed");
-            System.out.println("Result saved to: " + outputFilePath);
-        } catch (IOException e) {
-            ErrorHandler.showError("File error: " + e.getMessage());
-        }
+        int key = getKeyFromUser(operation);
+        fileProcessor.processFileOperation(filePath, operation, key);
     }
 
     private void handleBruteForceFileOperation() {
         String filePath = getInputFilePath("decrypt using Brute Force");
-        if (filePath == null) return;
-
-        try {
-            String content = fileHandler.readFile(filePath);
-            System.out.println("Attempting Brute Force decryption...");
-
-            int confirmedShift = caesarCipher.bruteForceDecryptAndGetShift(content);
-
-            if (confirmedShift != -1) {
-                String decryptedContent = caesarCipher.decrypt(content, confirmedShift);
-                String outputFilePath = fileHandler.generateOutputFilePath(filePath, "bruteforce_decrypt");
-                fileHandler.writeFile(filePath, outputFilePath, decryptedContent);
-                System.out.printf(SUCCESS_FILE_OPERATION, "decrypted using Brute Force");
-                System.out.println("Result saved to: " + outputFilePath);
-            } else {
-                ErrorHandler.showError("Decryption was not confirmed. No file was saved.");
-            }
-        } catch (IOException e) {
-            ErrorHandler.showError("File error: " + e.getMessage());
+        if (filePath != null) {
+            fileProcessor.handleBruteForceFileOperation(filePath);
         }
     }
 

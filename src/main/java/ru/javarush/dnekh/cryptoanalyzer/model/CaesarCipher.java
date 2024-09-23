@@ -73,7 +73,7 @@ public class CaesarCipher {
         char[] alphabetArray = alphabet.getAlphabet();
         int alphabetSize = alphabetArray.length;
 
-        System.out.println("\nStarting Brute Force Decryption...");
+        System.out.println("\nStarting Brute Force Decryption...\n");
 
         for (int shift = 1; shift < alphabetSize; shift++) {
             String decryptedText = decrypt(text, shift);
@@ -88,6 +88,7 @@ public class CaesarCipher {
             String userResponse = scanner.nextLine().trim().toLowerCase();
 
             if (userResponse.equals("yes")) {
+                System.out.println();
                 return shift;
             }
         }
