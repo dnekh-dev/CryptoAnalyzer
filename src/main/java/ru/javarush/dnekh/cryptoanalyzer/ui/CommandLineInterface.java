@@ -3,6 +3,7 @@ package ru.javarush.dnekh.cryptoanalyzer.ui;
 import ru.javarush.dnekh.cryptoanalyzer.exception.ErrorHandler;
 import ru.javarush.dnekh.cryptoanalyzer.service.FileProcessor;
 import ru.javarush.dnekh.cryptoanalyzer.utils.UserInputUtils;
+import ru.javarush.dnekh.cryptoanalyzer.service.OperationSuffix;
 
 import java.util.Scanner;
 
@@ -17,6 +18,17 @@ public class CommandLineInterface {
     private static final String MENU_HEADER = "MENU OPTIONS:";
     private static final String PROMPT_OPTION = "Choose an option: ";
     private static final String EXIT_MESSAGE = "Exiting...";
+    
+    private static final String BRUTE_FORCE_CHOSEN_OPERATION_MESSAGE = "decrypt using Brute Force";
+
+    private static final String HELP_MESSAGE = """
+                HELP:
+                1. Encrypt text from file - Encrypt a text file with a Caesar cipher.
+                2. Decrypt text from file with key - Decrypt a text file with a Caesar cipher using a key.
+                3. Brute Force Decrypt - Decrypt text using the Brute Force method.
+                4. Help - Show this help message.
+                5. Exit - Exit the application.
+                """;
 
     public CommandLineInterface() {
         this.scanner = new Scanner(System.in);
@@ -35,10 +47,10 @@ public class CommandLineInterface {
                 MenuOption menuOption = MenuOption.fromString(option);
                 switch (menuOption) {
                     case ENCRYPT:
-                        handleFileOperation("encrypt");
+                        handleFileOperation(OperationSuffix.ENCRYPT);
                         break;
                     case DECRYPT:
-                        handleFileOperation("decrypt");
+                        handleFileOperation(OperationSuffix.DECRYPT);
                         break;
                     case BRUTE_FORCE:
                         handleBruteForceFileOperation();
@@ -58,29 +70,19 @@ public class CommandLineInterface {
         }
     }
 
-    private void handleFileOperation(String operation) {
-        String filePath = UserInputUtils.getInputFilePath(operation);
-        if (filePath == null) return;
-        int key = UserInputUtils.getKeyFromUser(operation);
-        fileProcessor.processFileOperation(filePath, operation, key);
+    private void handleFileOperation(OperationSuffix operationSuffix) {
+        String filePath = UserInputUtils.getInputFilePath(operationSuffix.name().toLowerCase());
+        int key = UserInputUtils.getKeyFromUser(operationSuffix.name().toLowerCase());
+        fileProcessor.processFileOperation(filePath, operationSuffix, key);
     }
 
     private void handleBruteForceFileOperation() {
-        String filePath = UserInputUtils.getInputFilePath("decrypt using Brute Force");
-        if (filePath != null) {
-            fileProcessor.handleBruteForceFileOperation(filePath);
-        }
+        String filePath = UserInputUtils.getInputFilePath(BRUTE_FORCE_CHOSEN_OPERATION_MESSAGE);
+        fileProcessor.handleBruteForceFileOperation(filePath);
     }
 
     private void printHelp() {
-        System.out.println("""
-                HELP:
-                1. Encrypt text from file - Encrypt a text file with a Caesar cipher.
-                2. Decrypt text from file with key - Decrypt a text file with a Caesar cipher using a key.
-                3. Brute Force Decrypt - Decrypt text using the Brute Force method.
-                4. Help - Show this help message.
-                5. Exit - Exit the application.
-                """);
+        System.out.println(HELP_MESSAGE);
     }
 
     private void exitApplication() {

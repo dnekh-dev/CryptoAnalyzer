@@ -9,7 +9,6 @@ import java.util.Set;
  */
 public class Alphabet {
 
-    // Strings representing the Cyrillic alphabet, English alphabet, and additional symbols
     private static final String RUS_ALPHABET =
             "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
 
@@ -21,10 +20,8 @@ public class Alphabet {
     private static final String SYMBOLS =
             ".,«»\"':;!? -*()=+№_[]{}\\<>";
 
-    // Combined alphabet string
     private static final String ALPHABET = RUS_ALPHABET + ENG_ALPHABET + NUMBERS + SYMBOLS;
 
-    // Set for fast character lookup
     private final Set<Character> alphabetSet;
 
     /**

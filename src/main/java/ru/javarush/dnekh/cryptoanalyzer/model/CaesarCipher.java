@@ -11,6 +11,12 @@ public class CaesarCipher {
 
     private final Alphabet alphabet;
 
+private static final String ERR_MESSAGE_CHARACTER_NOT_SUPPORTED = " IS NOT SUPPORTED";
+private static final String UNSUCCESSFUL_BRUTE_FORCE_RESULT_MESSAGE = "BRUTE FORCE DECRYPTION COMPLETED. NO CORRECT DECRYPTION FOUND.";
+
+private static final String BRUTE_FORCE_STARTING_MESSAGE = "Starting Brute Force Decryption...";
+private static final String IS_CORRECT_QUESTION_MESSAGE = "Is this correct? (yes/no): ";
+
     /**
      * Constructor initializes the CaesarCipher with a given Alphabet.
      */
@@ -43,7 +49,7 @@ public class CaesarCipher {
                 }
                 encryptedText.append(alphabetArray[newIndex]);
             } else {
-                throw new InvalidCharacterException("Character '" + c + "' is not in the alphabet.");
+                throw new InvalidCharacterException(c + ERR_MESSAGE_CHARACTER_NOT_SUPPORTED);
             }
         }
 
@@ -73,7 +79,8 @@ public class CaesarCipher {
         char[] alphabetArray = alphabet.getAlphabet();
         int alphabetSize = alphabetArray.length;
 
-        System.out.println("\nStarting Brute Force Decryption...\n");
+        System.out.println();
+        System.out.println(BRUTE_FORCE_STARTING_MESSAGE);
 
         for (int shift = 1; shift < alphabetSize; shift++) {
             String decryptedText = decrypt(text, shift);
@@ -84,7 +91,7 @@ public class CaesarCipher {
             }
 
             System.out.println("Shift " + shift + ": " + firstSentence);
-            System.out.print("Is this correct? (yes/no): ");
+            System.out.print(IS_CORRECT_QUESTION_MESSAGE);
             String userResponse = scanner.nextLine().trim().toLowerCase();
 
             if (userResponse.equals("yes")) {
@@ -93,7 +100,7 @@ public class CaesarCipher {
             }
         }
 
-        System.out.println("Brute Force Decryption Completed. No correct decryption found.");
+        System.out.println(UNSUCCESSFUL_BRUTE_FORCE_RESULT_MESSAGE);
         return -1;
     }
 

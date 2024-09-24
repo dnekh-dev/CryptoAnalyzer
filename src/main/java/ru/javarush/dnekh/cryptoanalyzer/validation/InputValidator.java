@@ -38,7 +38,7 @@ public class InputValidator {
      */
     private static boolean isSystemDirectory(File directory) {
         String[] systemDirectories = {
-                "C:\\Windows", "C:\\Program Files", "C:\\Program Files (x86)", // Windows
+                "C:\\Windows", "C:\\Program Files", "C:\\Program Files (x86)",
                 "/bin", "/sbin", "/lib", "/usr", "/etc", // Unix/Linux
                 "/Applications", "/System", "/Library", "/Volumes" // macOS
         };

@@ -5,9 +5,7 @@ package ru.javarush.dnekh.cryptoanalyzer.exception;
  */
 public final class ErrorHandler {
 
-    // Private constructor to prevent instantiation
     private ErrorHandler() {
-        // This constructor is intentionally left empty
     }
 
     /**
