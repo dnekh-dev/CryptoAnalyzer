@@ -36,7 +36,7 @@ public class FileProcessor {
             System.out.println(SAVED_TO_MESSAGE + fileHandler.generateOutputFilePath(filePath, operationSuffix));
             System.out.println();
         } catch (IOException e) {
-            ErrorHandler.showError("File error: " + e.getMessage());
+            ErrorHandler.showError(ErrorHandler.FILE_ERROR_MESSAGE + e.getMessage());
         }
     }
 
@@ -54,10 +54,10 @@ public class FileProcessor {
                 System.out.println(SAVED_TO_MESSAGE + fileHandler.generateOutputFilePath(filePath, OperationSuffix.BRUTE_FORCE_DECRYPT));
                 System.out.println();
             } else {
-                ErrorHandler.showError("Decryption was not confirmed. No file was saved.");
+                ErrorHandler.showError(ErrorHandler.DECRYPTION_NOT_CONFIRMED_MESSAGE);
             }
         } catch (IOException e) {
-            ErrorHandler.showError("File error: " + e.getMessage());
+            ErrorHandler.showError(ErrorHandler.FILE_ERROR_MESSAGE + e.getMessage());
         }
     }
 }

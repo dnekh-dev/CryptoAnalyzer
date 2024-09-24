@@ -62,10 +62,10 @@ public class CommandLineInterface {
                         exitApplication();
                         break;
                     default:
-                        ErrorHandler.showError("Invalid option. Please try again.");
+                        ErrorHandler.showError(ErrorHandler.INVALID_CHOSEN_OPTION_MESSAGE);
                 }
             } catch (IllegalArgumentException e) {
-                ErrorHandler.showError(e.getMessage());
+                ErrorHandler.showError(ErrorHandler.SOME_ERROR + e.getMessage());
             }
         }
     }

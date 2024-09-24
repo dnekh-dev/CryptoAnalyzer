@@ -14,15 +14,8 @@ public class UserInputUtils {
 
     private static final Scanner scanner = new Scanner(System.in);
 
-    private static final String INVALID_FILE_PATH = "INVALID FILE PATH. PLEASE TRY AGAIN!";
-    private static final String INVALID_KEY_ENTERED = "INVALID KEY ENTERED. PLEASE ENTER A VALID INTEGER!";
-    private static final String INVALID_OUTPUT_DIRECTORY = "THE OUTPUT DIRECTORY IS INVALID OR NOT WRITABLE. PLEASE ENTER A VALID PATH: ";
-
     private static final String ENTER_FILE_PATH = "Enter the file path to %s: ";
     private static final String ENTER_KEY_OPERATION = "Enter the key for %s: ";
-
-    private static final String ENTER_VALID_PATH = "Enter a valid output file path: ";
-    private static final String PATH_CANNOT_BE_EMPTY = "Path cannot be empty. Please enter a valid path.";
 
     /**
      * Prompts the user for a valid file path and validates it.
@@ -38,7 +31,7 @@ public class UserInputUtils {
             if (InputValidator.isValidFilePath(filePath)) {
                 return filePath;
             }
-            ErrorHandler.showError(INVALID_FILE_PATH);
+            ErrorHandler.showError(ErrorHandler.INVALID_FILE_PATH);
             System.out.println();
         }
     }
@@ -57,7 +50,7 @@ public class UserInputUtils {
                 key = Integer.parseInt(scanner.nextLine().trim());
                 return key;
             } catch (NumberFormatException e) {
-                ErrorHandler.showError(INVALID_KEY_ENTERED);
+                ErrorHandler.showError(ErrorHandler.INVALID_KEY_ENTERED);
                 System.out.println();
             }
         }
@@ -76,7 +69,7 @@ public class UserInputUtils {
             return outputPath;
         }
 
-        ErrorHandler.showError(INVALID_OUTPUT_DIRECTORY);
+        ErrorHandler.showError(ErrorHandler.INVALID_OUTPUT_DIRECTORY);
         return getPathFromUser();
     }
 
@@ -87,7 +80,7 @@ public class UserInputUtils {
      */
     private static Path getPathFromUser() {
         while (true) {
-            System.out.print(ENTER_VALID_PATH);
+            System.out.print(ErrorHandler.ENTER_VALID_PATH);
             String userInputPath = scanner.nextLine().trim();
 
             if (!userInputPath.isEmpty()) {
@@ -97,10 +90,10 @@ public class UserInputUtils {
                 if (outputDirectory != null && InputValidator.isValidDirectory(outputDirectory.toString())) {
                     return outputPath;
                 } else {
-                    ErrorHandler.showError(INVALID_OUTPUT_DIRECTORY);
+                    ErrorHandler.showError(ErrorHandler.INVALID_OUTPUT_DIRECTORY);
                 }
             } else {
-                System.out.println(PATH_CANNOT_BE_EMPTY);
+                System.out.println(ErrorHandler.PATH_CANNOT_BE_EMPTY);
             }
         }
     }
@@ -111,10 +104,8 @@ public class UserInputUtils {
         String newFileName;
 
         if (extensionIndex > 0) {
-            // Добавляем суффикс перед расширением файла
             newFileName = originalFileName.substring(0, extensionIndex) + operationSuffix + originalFileName.substring(extensionIndex);
         } else {
-            // Если у файла нет расширения, просто добавляем суффикс
             newFileName = originalFileName + operationSuffix;
         }
         return newFileName;
