@@ -2,7 +2,7 @@ package ru.javarush.dnekh.cryptoanalyzer.ui;
 
 import ru.javarush.dnekh.cryptoanalyzer.exception.ErrorHandler;
 import ru.javarush.dnekh.cryptoanalyzer.service.FileProcessor;
-import ru.javarush.dnekh.cryptoanalyzer.validation.InputValidator;
+import ru.javarush.dnekh.cryptoanalyzer.utils.UserInputUtils;
 
 import java.util.Scanner;
 
@@ -14,7 +14,6 @@ public class CommandLineInterface {
     private final Scanner scanner;
     private final FileProcessor fileProcessor;
 
-    // Constants for messages
     private static final String MENU_HEADER = "MENU OPTIONS:";
     private static final String PROMPT_OPTION = "Choose an option: ";
     private static final String EXIT_MESSAGE = "Exiting...";
@@ -60,36 +59,16 @@ public class CommandLineInterface {
     }
 
     private void handleFileOperation(String operation) {
-        String filePath = getInputFilePath(operation);
+        String filePath = UserInputUtils.getInputFilePath(operation);
         if (filePath == null) return;
-        int key = getKeyFromUser(operation);
+        int key = UserInputUtils.getKeyFromUser(operation);
         fileProcessor.processFileOperation(filePath, operation, key);
     }
 
     private void handleBruteForceFileOperation() {
-        String filePath = getInputFilePath("decrypt using Brute Force");
+        String filePath = UserInputUtils.getInputFilePath("decrypt using Brute Force");
         if (filePath != null) {
             fileProcessor.handleBruteForceFileOperation(filePath);
-        }
-    }
-
-    private String getInputFilePath(String operation) {
-        System.out.printf("Enter the file path to %s: ", operation);
-        String filePath = scanner.nextLine().trim();
-        if (!InputValidator.isValidFilePath(filePath)) {
-            ErrorHandler.showError("INVALID FILE PATH. PLEASE TRY AGAIN!\n");
-            return null;
-        }
-        return filePath;
-    }
-
-    private int getKeyFromUser(String operation) {
-        System.out.printf("Enter the key for %s: ", operation);
-        try {
-            return Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            ErrorHandler.showError("Invalid key entered. Please enter a valid integer.");
-            return getKeyFromUser(operation); // Recursively ask for the key until valid input is provided
         }
     }
 
