@@ -5,20 +5,20 @@ import ru.javarush.dnekh.cryptoanalyzer.exception.InvalidCharacterException;
 import java.util.Scanner;
 
 /**
- * This class provides methods for encrypting and decrypting text using the Caesar cipher.
+ * This class provides methods for encrypting, decrypting, and brute force decryption of text using the Caesar cipher.
+ * It works with both the given shift key for encryption/decryption and the brute force method without a key.
  */
 public class CaesarCipher {
 
     private final Alphabet alphabet;
 
-private static final String ERR_MESSAGE_CHARACTER_NOT_SUPPORTED = " IS NOT SUPPORTED";
-private static final String UNSUCCESSFUL_BRUTE_FORCE_RESULT_MESSAGE = "BRUTE FORCE DECRYPTION COMPLETED. NO CORRECT DECRYPTION FOUND.";
-
-private static final String BRUTE_FORCE_STARTING_MESSAGE = "Starting Brute Force Decryption...";
-private static final String IS_CORRECT_QUESTION_MESSAGE = "Is this correct? (yes/no): ";
+    private static final String ERR_MESSAGE_CHARACTER_NOT_SUPPORTED = " IS NOT SUPPORTED";
+    private static final String UNSUCCESSFUL_BRUTE_FORCE_RESULT_MESSAGE = "BRUTE FORCE DECRYPTION COMPLETED. NO CORRECT DECRYPTION FOUND.";
+    private static final String BRUTE_FORCE_STARTING_MESSAGE = "Starting Brute Force Decryption...";
+    private static final String IS_CORRECT_QUESTION_MESSAGE = "Is this correct? (yes/no): ";
 
     /**
-     * Constructor initializes the CaesarCipher with a given Alphabet.
+     * Constructor initializes the CaesarCipher with a given Alphabet instance.
      */
     public CaesarCipher() {
         this.alphabet = new Alphabet();
@@ -26,11 +26,12 @@ private static final String IS_CORRECT_QUESTION_MESSAGE = "Is this correct? (yes
 
     /**
      * Encrypts a given text using the Caesar cipher with the specified key.
+     * Converts the text to lowercase and shifts each character according to the provided key.
      *
      * @param text the text to encrypt
      * @param key  the encryption key (shift value)
      * @return the encrypted text
-     * @throws InvalidCharacterException if the text contains a character not in the alphabet
+     * @throws InvalidCharacterException if the text contains a character not present in the alphabet
      */
     public String encrypt(String text, int key) throws InvalidCharacterException {
         StringBuilder encryptedText = new StringBuilder();
@@ -58,11 +59,12 @@ private static final String IS_CORRECT_QUESTION_MESSAGE = "Is this correct? (yes
 
     /**
      * Decrypts a given text using the Caesar cipher with the specified key.
+     * This method simply calls the encrypt method with the negative of the given key.
      *
      * @param text the text to decrypt
      * @param key  the decryption key (shift value)
      * @return the decrypted text
-     * @throws InvalidCharacterException if the text contains a character not in the alphabet
+     * @throws InvalidCharacterException if the text contains a character not present in the alphabet
      */
     public String decrypt(String text, int key) throws InvalidCharacterException {
         return encrypt(text, -key);
@@ -70,9 +72,10 @@ private static final String IS_CORRECT_QUESTION_MESSAGE = "Is this correct? (yes
 
     /**
      * Performs brute force decryption by trying all possible shifts and returns the confirmed shift value.
+     * The user is prompted to confirm if the decryption is correct after each shift attempt.
      *
-     * @param text the text to decrypt
-     * @return the confirmed shift value if the user confirms the decryption, or -1 if no confirmation
+     * @param text the text to decrypt using brute force
+     * @return the confirmed shift value if the user confirms the decryption, or -1 if no confirmation is given
      */
     public int bruteForceDecryptAndGetShift(String text) {
         Scanner scanner = new Scanner(System.in);
@@ -85,6 +88,7 @@ private static final String IS_CORRECT_QUESTION_MESSAGE = "Is this correct? (yes
         for (int shift = 1; shift < alphabetSize; shift++) {
             String decryptedText = decrypt(text, shift);
 
+            // Extract the first sentence up to 100 characters or until a punctuation mark
             String firstSentence = decryptedText.split("[.!?]", 2)[0];
             if (firstSentence.length() > 100) {
                 firstSentence = firstSentence.substring(0, 100);
